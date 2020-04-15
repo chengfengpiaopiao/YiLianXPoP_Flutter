@@ -19,9 +19,19 @@ class XPopBean{
   //是否实心
   bool isContentFill;
 
+  //src锚点大小
+  num anSrcWidth = 14;
+  num anSrcHeight = 14;
+  num marginTop = 10;
+
+  //
+  double marginLeft ;
+  double marginRight;
+
   XPopBean(this.drawAnchor, this.anchorColor, this.isAnchorFill,
       this.anchorSize, this.drawContentBg, this.contentBg, this.radiusX,
-      this.radiusY, this.isContentFill);
+      this.radiusY, this.isContentFill, this.anSrcWidth, this.anSrcHeight,
+      this.marginTop,this.marginLeft,this.marginRight);
 
 
 }

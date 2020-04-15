@@ -1,8 +1,10 @@
 import 'dart:ui';
+import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'dart:ui' as ui show TextStyle;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:ylian_xpop/xpop_bean.dart';
 
 class YLianXPoP extends StatefulWidget{
@@ -10,6 +12,11 @@ class YLianXPoP extends StatefulWidget{
   //索引位置
   Offset offset;
   Widget wrapWidget;
+
+  //src锚点大小
+  num anSrcWidth = 14;
+  num anSrcHeight = 14;
+  num marginTop = 10;
 
   //是否需要绘制锚点
   bool drawAnchor = true;
@@ -29,8 +36,13 @@ class YLianXPoP extends StatefulWidget{
   //是否实心
   bool isContentFill;
 
+  //边距
+  double marginLeft  = 45.0;
+  double marginRight= 45.0;
 
-  YLianXPoP(this.offset,this.wrapWidget,{this.drawAnchor,this.anchorColor,this.isAnchorFill,this.anchorSize,this.drawContentBg,this.contentBg,this.radiusX,this.radiusY,this.isContentFill});
+  YLianXPoP(this.offset,this.wrapWidget,{
+    this.drawAnchor,this.anchorColor,this.isAnchorFill,this.anchorSize,this.drawContentBg,this.contentBg,
+    this.radiusX,this.radiusY,this.isContentFill,this.anSrcWidth,this.anSrcHeight,this.marginTop,this.marginLeft,this.marginRight});
 
   @override
   State<StatefulWidget> createState() {
@@ -50,7 +62,11 @@ class _TipState extends State<YLianXPoP>{
   void initState() {
     offset = widget.offset;
     wrapWidget = widget.wrapWidget;
-    xPopBean = XPopBean(widget.drawAnchor,widget.anchorColor,widget.isAnchorFill,widget.anchorSize,widget.drawContentBg,widget.contentBg,widget.radiusX,widget.radiusY,widget.isContentFill);
+    xPopBean = XPopBean(
+        widget.drawAnchor, widget.anchorColor, widget.isAnchorFill,
+        widget.anchorSize, widget.drawContentBg, widget.contentBg, widget.radiusX,
+        widget.radiusY, widget.isContentFill, widget.anSrcWidth, widget.anSrcHeight,
+        widget.marginTop,widget.marginLeft,widget.marginRight);
     super.initState();
   }
 
@@ -62,7 +78,6 @@ class _TipState extends State<YLianXPoP>{
     );
 
     var widgetPainer = CustomPaint(painter: _Painter(offset,context,widget,xPopBean));
-
     return Container(
       child: Stack(
         children: <Widget>[
@@ -70,7 +85,7 @@ class _TipState extends State<YLianXPoP>{
             child:  widgetPainer,
           ),
           new Container(
-            margin: EdgeInsets.fromLTRB(45, offset.dy + 25, 45, 0),
+            margin: EdgeInsets.fromLTRB(xPopBean.marginLeft??45, offset.dy + (xPopBean?.anSrcHeight??14) + (xPopBean?.marginTop??10) + ((xPopBean?.anchorSize) != null ? xPopBean?.anchorSize[1] : 10), xPopBean.marginLeft??45, 0),
             child: widget,
           ),
         ],
@@ -85,11 +100,9 @@ class _Painter extends CustomPainter {
   BuildContext context;
   Widget wrapWidget;
   //锚点的 宽 高 离锚点的距离
-  var anchorArray = [10,10,15,8.0];
-  num margin = 40;
+
   XPopBean xPopBean;
 
-  PaintingStyle mode = PaintingStyle.fill;
 
   GlobalKey globalKey = GlobalKey();
 
@@ -107,26 +120,63 @@ class _Painter extends CustomPainter {
 
     print(contentWidth);
 
-    num startY = offset.dy +  anchorArray[2] + anchorArray[1];
+    num anSrcWidth = xPopBean?.anSrcWidth??14;
+    num anSrcHeight = xPopBean?.anSrcHeight??14;
+    num marginTop = xPopBean?.marginTop??10;
 
-    canvas.drawRRect(
-        RRect.fromLTRBXY(40, startY, MediaQuery.of(context).size.width - 40, startY + contentHeight, anchorArray[3], anchorArray[3]),
-        Paint()..color = Colors.black..strokeWidth = 4.0..style = mode);
+    num anchorHeight  = (xPopBean?.anchorSize) != null ? xPopBean?.anchorSize[1] : 10;
+    num startY = offset.dy + anSrcHeight;
 
+    PaintingStyle mode = PaintingStyle.fill;
+    if(xPopBean.isContentFill??true){
+      mode =  PaintingStyle.fill;
+    }else{
+      mode =  PaintingStyle.stroke;
+    }
+    Color contentColor = xPopBean.contentBg ?? Colors.black;
+
+    Paint paint = Paint();
     if(xPopBean?.drawAnchor??true){
       Color anchorColor = xPopBean?.anchorColor??Colors.black;
-      num startTranX = offset.dx + anchorArray[0]/2 - 2.5;
-      num endTranX = offset.dx + anchorArray[0]/2 + 2.5;
-      num tranY = startY - 5;
+      bool isAnchorFill = xPopBean?.isAnchorFill??true;
+      var anchorSize = xPopBean?.anchorSize ??[10,10];
+
+      num centerPX = offset.dx + anSrcWidth/2;
+      num startTranX = centerPX - anchorSize[0]/2;
+      num endTranX = centerPX+ anchorSize[0]/2;
+      Path path = Path();
+      path..moveTo(startTranX, startY + marginTop + anchorHeight)..lineTo(centerPX,  startY + marginTop +anchorHeight - anchorHeight);
+      path..lineTo(endTranX, startY + marginTop + anchorHeight);
+      path.close();
+      if(isAnchorFill){
+        path.close();
+      }
       canvas.drawPath(
-          Path()
-            ..moveTo(startTranX, startY)..lineTo(offset.dx + anchorArray[0]/2, tranY)
-            ..lineTo(endTranX, startY)
-            ..close(),
-          Paint()
+          path,
+          paint
             ..color = anchorColor..strokeWidth = 1.0
-            ..style = PaintingStyle.fill);
+            ..style = isAnchorFill?PaintingStyle.fill:PaintingStyle.stroke);
+
+      canvas.drawRRect(
+          RRect.fromLTRBXY(xPopBean.marginLeft??40, startY + marginTop + anchorHeight-1 , MediaQuery.of(context).size.width - (xPopBean.marginRight??40), startY + marginTop + contentHeight +anchorHeight, xPopBean?.radiusX??8, xPopBean?.radiusY??8),
+          paint..color = contentColor..strokeWidth = 1.0..style = mode);
+
+
+      paint.blendMode = BlendMode.srcOut;
+      if(!(xPopBean.isContentFill??true)){
+        Path newPath = Path();
+        newPath..moveTo(startTranX+0.5, startY + marginTop + anchorHeight)..lineTo(endTranX-0.5, startY + marginTop + anchorHeight);
+        canvas.drawPath(
+            newPath,
+            paint
+              ..color = Colors.transparent..strokeWidth = 1.0
+              ..style = isAnchorFill?PaintingStyle.fill:PaintingStyle.stroke);
+      }
     }
+
+
+
+
 
   }
 
