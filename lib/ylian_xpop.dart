@@ -1,17 +1,16 @@
 import 'dart:ui';
-
-import 'dart:ui' as ui show TextStyle;
 import 'package:flutter/cupertino.dart';
+import 'dart:ui' as ui show TextStyle;
+
 import 'package:flutter/material.dart';
 
-class YLianXPopview extends StatefulWidget{
+class YLianXPoP extends StatefulWidget{
 
+  //索引位置
   Offset offset;
-  String content;
-  num srcX;
-  num srcY;
+  Widget wrapWidget;
 
-  YLianXPopview(this.offset,this.content,this.srcX,this.srcY);
+  YLianXPoP(this.offset,this.wrapWidget);
 
   @override
   State<StatefulWidget> createState() {
@@ -19,32 +18,38 @@ class YLianXPopview extends StatefulWidget{
   }
 }
 
-class _TipState extends State<YLianXPopview>{
+GlobalKey anchorKey2 = GlobalKey();
+
+
+class _TipState extends State<YLianXPoP>{
   Offset offset;
-  String content;
-  num srcX;
-  num srcY;
-  final GlobalKey paintKey = GlobalKey();
+  Widget wrapWidget;
 
   @override
   void initState() {
     offset = widget.offset;
-    content = widget.content;
-    srcX = widget.srcX;
-    srcY = widget.srcY;
+    wrapWidget = widget.wrapWidget;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    var widget = new Container(
+      key:anchorKey2,
+      child: wrapWidget,
+    );
+
+    var widgetPainer = CustomPaint(painter: _Painter(offset,context,widget),);
+
     return Container(
       child: Stack(
         children: <Widget>[
           Container(
-            child:  CustomPaint(
-              key: paintKey,
-              painter: _Painter(offset,context,content,srcX,srcY),
-            ),
+            child:  widgetPainer,
+          ),
+          new Container(
+            margin: EdgeInsets.fromLTRB(45, offset.dy + 25, 45, 0),
+            child: widget,
           ),
         ],
       ),
@@ -55,70 +60,51 @@ class _TipState extends State<YLianXPopview>{
 
 class _Painter extends CustomPainter {
   Offset offset;
-  String content;
-  num srcX;
-  num srcY;
   BuildContext context;
+  Widget wrapWidget;
+  //锚点的 宽 高 离锚点的距离
+  var anchorArray = [10,10,15,8.0];
+  num margin = 40;
 
-  _Painter(this.offset,this.context,this.content,this.srcX,this.srcY);
+  PaintingStyle mode = PaintingStyle.fill;
+
+  GlobalKey globalKey = GlobalKey();
+
+  _Painter(this.offset,this.context,this.wrapWidget);
 
   @override
   void paint(Canvas canvas, Size size) {
-    num startY = offset.dy + srcY + 15;
-    ParagraphBuilder pb = ParagraphBuilder(ParagraphStyle(
-      textAlign: TextAlign.center,
-      fontWeight: FontWeight.normal,
-      fontStyle: FontStyle.normal,
-      fontSize: 12,
-    ))
-      ..pushStyle(ui.TextStyle(color: Colors.black))
-      ..addText(
-          content);
-    ParagraphConstraints pc = ParagraphConstraints(width: MediaQuery.of(context).size.width - 2 * 50);
-    Paragraph paragraph = pb.build()..layout(pc);
-    canvas.drawParagraph(paragraph, Offset(50, startY));
 
-    print(paragraph.height);
+    RenderBox renderBox = anchorKey2.currentContext.findRenderObject();
+    var offset2 = renderBox.localToGlobal(Offset.zero);
+    print(offset2.dx);
+
+    final contentWidth = anchorKey2.currentContext.size.width;
+    final contentHeight = anchorKey2.currentContext.size.height;
+
+    print(contentWidth);
+
+    num startY = offset.dy +  anchorArray[2] + anchorArray[1];
 
     canvas.drawRRect(
-        RRect.fromLTRBXY(40, startY, MediaQuery.of(context).size.width-40, startY + paragraph.height + 10, 8.0, 8.0),
-        Paint()..color = Colors.black..strokeWidth = 4.0..style = PaintingStyle.fill);
+        RRect.fromLTRBXY(40, startY, MediaQuery.of(context).size.width - 40, startY + contentHeight, anchorArray[3], anchorArray[3]),
+        Paint()..color = Colors.black..strokeWidth = 4.0..style = mode);
 
-
-    num startTranX = offset.dx + srcX - 2.5;
-    num endTranX = offset.dx + srcX + 2.5;
+    num startTranX = offset.dx + anchorArray[0]/2 - 2.5;
+    num endTranX = offset.dx + anchorArray[0]/2 + 2.5;
     num tranY = startY - 5;
     canvas.drawPath(
         Path()
-          ..moveTo(startTranX, startY)..lineTo(offset.dx + srcX, tranY)
+          ..moveTo(startTranX, startY)..lineTo(offset.dx + anchorArray[0]/2, tranY)
           ..lineTo(endTranX, startY)
           ..close(),
         Paint()
           ..color = Colors.black..strokeWidth = 1.0
           ..style = PaintingStyle.fill);
-    _createTxt(canvas,startY);
   }
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
     return true;
-  }
-
-  num _createTxt(Canvas canvas ,num startY){
-    //计算文字高度大小
-    ParagraphBuilder pb = ParagraphBuilder(ParagraphStyle(
-      textAlign: TextAlign.left,
-      fontWeight: FontWeight.normal,
-      fontStyle: FontStyle.normal,
-      fontSize: 12,
-    ))
-      ..pushStyle(ui.TextStyle(color: Colors.white))
-      ..addText(
-          content);
-    ParagraphConstraints pc = ParagraphConstraints(width: MediaQuery.of(context).size.width - 2 * 50);
-    Paragraph paragraph = pb.build()..layout(pc);
-    canvas.drawParagraph(paragraph, Offset(50, startY+5));
-    print(paragraph.height.toString());
-    return paragraph.height;
   }
 }
