@@ -31,10 +31,13 @@ class XPopBean{
   //画笔大小
   double strokeWidth = 1.0;
 
+  //
+  bool isWidthAll = true;
+
   XPopBean(this.drawAnchor, this.anchorColor, this.isAnchorFill,
       this.anchorSize, this.drawContentBg, this.contentBg, this.radiusX,
       this.radiusY, this.isContentFill, this.anSrcWidth, this.anSrcHeight,
-      this.marginTop,this.marginLeft,this.marginRight,this.strokeWidth);
+      this.marginTop,this.marginLeft,this.marginRight,this.strokeWidth,this.isWidthAll);
 
 
 }

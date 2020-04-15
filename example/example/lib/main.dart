@@ -32,7 +32,7 @@ class _MyAppState extends State<MyApp> {
         backgroundColor: Colors.yellow,
         title: Text('YLian XPOP 弹窗',style: new TextStyle(color: Colors.black),),
       ),
-      body: new Column(
+      body: new Stack(
         children: <Widget>[
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -70,17 +70,45 @@ class _MyAppState extends State<MyApp> {
               )
             ],
           ),
-//       _createAnyPosition()
+       _createAnyPosition()
       ],
       ),
     );
   }
 
-//  Widget _createAnyPosition(){
-//    return new Positioned(
-//      top: 100,
-//      left: 100,
-//      child: ,
-//    );
-//  }
+  Widget _createAnyPosition(){
+    return new Center(
+      child: new GestureDetector(
+        onTap: (){
+          Offset offset = Offset(100,100);
+          Navigator.push(context, PopRoute(child: Popup(
+            child: YLianXPoP(offset,new Container(
+              padding: EdgeInsets.all(5),
+              margin: EdgeInsets.all(10),
+              child: new Text("任意位置"
+                  "",style: new TextStyle(color: Colors.red,fontSize: 12),),
+            ),
+              drawAnchor: false,
+              anchorColor:Colors.black,
+              drawContentBg: true,
+              contentBg: Colors.black,
+              isContentFill: true,
+              isAnchorFill: true,
+              marginLeft: 0,
+              marginRight: 0,
+              isWidthAll: true,
+            ),
+            onClick: (){
+              print("exit");
+            },
+          )));
+        },
+        child: new Container(
+          margin: EdgeInsets.all(15),
+          child:new Text("2019年1月10日，国家互联网信息办公室发布《区块链信息服务管理规定》 ",
+            style: new TextStyle(color: Colors.black,fontSize: 15,fontWeight: FontWeight.bold),) ,
+        ),
+      ),
+    );
+  }
 }
