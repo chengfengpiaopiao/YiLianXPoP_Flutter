@@ -51,7 +51,10 @@ class _MyAppState extends State<MyApp> {
                       child: new Text("区块链是一个信息技术领域的术语。从本质上讲，它是一个共享数据库，存储于其中的数据或信息，"
                           "具有“不可伪造”“全程留痕”“可以追溯”“公开透明”“集体维护”等特征。"
                           "",style: new TextStyle(color: Colors.white,fontSize: 12),),
-                    ),drawAnchor: false,),
+                    ),
+                      drawAnchor: true,
+                        anchorColor:Colors.red
+                    ),
                     onClick: (){
                       print("exit");
                     },

@@ -114,6 +114,7 @@ class _Painter extends CustomPainter {
         Paint()..color = Colors.black..strokeWidth = 4.0..style = mode);
 
     if(xPopBean?.drawAnchor??true){
+      Color anchorColor = xPopBean?.anchorColor??Colors.black;
       num startTranX = offset.dx + anchorArray[0]/2 - 2.5;
       num endTranX = offset.dx + anchorArray[0]/2 + 2.5;
       num tranY = startY - 5;
@@ -123,7 +124,7 @@ class _Painter extends CustomPainter {
             ..lineTo(endTranX, startY)
             ..close(),
           Paint()
-            ..color = Colors.black..strokeWidth = 1.0
+            ..color = anchorColor..strokeWidth = 1.0
             ..style = PaintingStyle.fill);
     }
 
