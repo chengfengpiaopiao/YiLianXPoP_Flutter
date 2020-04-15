@@ -32,7 +32,9 @@ class YLianXPoP extends StatefulWidget{
   //内容背景色
   Color contentBg;
   //圆角
-  num radiusX; num radiusY;
+  num radiusX;
+  num radiusY;
+
   //是否实心
   bool isContentFill;
 
@@ -40,9 +42,11 @@ class YLianXPoP extends StatefulWidget{
   double marginLeft  = 45.0;
   double marginRight= 45.0;
 
+  double strokeWidth = 1.0;
+
   YLianXPoP(this.offset,this.wrapWidget,{
     this.drawAnchor,this.anchorColor,this.isAnchorFill,this.anchorSize,this.drawContentBg,this.contentBg,
-    this.radiusX,this.radiusY,this.isContentFill,this.anSrcWidth,this.anSrcHeight,this.marginTop,this.marginLeft,this.marginRight});
+    this.radiusX,this.radiusY,this.isContentFill,this.anSrcWidth,this.anSrcHeight,this.marginTop,this.marginLeft,this.marginRight,this.strokeWidth});
 
   @override
   State<StatefulWidget> createState() {
@@ -66,7 +70,7 @@ class _TipState extends State<YLianXPoP>{
         widget.drawAnchor, widget.anchorColor, widget.isAnchorFill,
         widget.anchorSize, widget.drawContentBg, widget.contentBg, widget.radiusX,
         widget.radiusY, widget.isContentFill, widget.anSrcWidth, widget.anSrcHeight,
-        widget.marginTop,widget.marginLeft,widget.marginRight);
+        widget.marginTop,widget.marginLeft,widget.marginRight,widget.strokeWidth);
     super.initState();
   }
 
@@ -102,7 +106,6 @@ class _Painter extends CustomPainter {
   //锚点的 宽 高 离锚点的距离
 
   XPopBean xPopBean;
-
 
   GlobalKey globalKey = GlobalKey();
 
@@ -151,33 +154,29 @@ class _Painter extends CustomPainter {
       if(isAnchorFill){
         path.close();
       }
+      num stokeWidth  = xPopBean.strokeWidth ?? 1.0 ;
       canvas.drawPath(
           path,
           paint
-            ..color = anchorColor..strokeWidth = 1.0
+            ..color = anchorColor..strokeWidth = stokeWidth
             ..style = isAnchorFill?PaintingStyle.fill:PaintingStyle.stroke);
 
-      num suffix = (xPopBean.isContentFill??true) ? 1: 0;
+      num suffix = (xPopBean.isContentFill??true) ? stokeWidth: 0;
       canvas.drawRRect(
           RRect.fromLTRBXY(xPopBean.marginLeft??40, startY + marginTop + anchorHeight - suffix, MediaQuery.of(context).size.width - (xPopBean.marginRight??40), startY + marginTop + contentHeight +anchorHeight, xPopBean?.radiusX??8, xPopBean?.radiusY??8),
-          paint..color = contentColor..strokeWidth = 1.0..style = mode);
+          paint..color = contentColor..strokeWidth = stokeWidth..style = mode);
 
       paint.blendMode = BlendMode.srcOut;
       if(!(xPopBean.isContentFill??true)){
         Path newPath = Path();
-        newPath..moveTo(startTranX+0.5, startY + marginTop + anchorHeight)..lineTo(endTranX-0.5, startY + marginTop + anchorHeight);
+        newPath..moveTo(startTranX+stokeWidth/2, startY + marginTop + anchorHeight)..lineTo(endTranX-stokeWidth/2, startY + marginTop + anchorHeight);
         canvas.drawPath(
             newPath,
             paint
-              ..color = Colors.transparent..strokeWidth = 1.0
+              ..color = Colors.transparent..strokeWidth = stokeWidth
               ..style = isAnchorFill?PaintingStyle.fill:PaintingStyle.stroke);
       }
     }
-
-
-
-
-
   }
 
   @override

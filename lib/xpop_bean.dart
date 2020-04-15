@@ -24,14 +24,17 @@ class XPopBean{
   num anSrcHeight = 14;
   num marginTop = 10;
 
-  //
+  //左右边距
   double marginLeft ;
   double marginRight;
+
+  //画笔大小
+  double strokeWidth = 1.0;
 
   XPopBean(this.drawAnchor, this.anchorColor, this.isAnchorFill,
       this.anchorSize, this.drawContentBg, this.contentBg, this.radiusX,
       this.radiusY, this.isContentFill, this.anSrcWidth, this.anSrcHeight,
-      this.marginTop,this.marginLeft,this.marginRight);
+      this.marginTop,this.marginLeft,this.marginRight,this.strokeWidth);
 
 
 }

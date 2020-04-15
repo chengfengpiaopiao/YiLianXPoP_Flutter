@@ -57,6 +57,9 @@ class _MyAppState extends State<MyApp> {
                         anchorColor:Colors.black,
                       drawContentBg: true,
                       contentBg: Colors.black,
+                      isContentFill: true,
+                      isAnchorFill: true,
+
                     ),
                     onClick: (){
                       print("exit");
