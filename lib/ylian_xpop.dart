@@ -157,10 +157,10 @@ class _Painter extends CustomPainter {
             ..color = anchorColor..strokeWidth = 1.0
             ..style = isAnchorFill?PaintingStyle.fill:PaintingStyle.stroke);
 
+      num suffix = (xPopBean.isContentFill??true) ? 1: 0;
       canvas.drawRRect(
-          RRect.fromLTRBXY(xPopBean.marginLeft??40, startY + marginTop + anchorHeight-1 , MediaQuery.of(context).size.width - (xPopBean.marginRight??40), startY + marginTop + contentHeight +anchorHeight, xPopBean?.radiusX??8, xPopBean?.radiusY??8),
+          RRect.fromLTRBXY(xPopBean.marginLeft??40, startY + marginTop + anchorHeight - suffix, MediaQuery.of(context).size.width - (xPopBean.marginRight??40), startY + marginTop + contentHeight +anchorHeight, xPopBean?.radiusX??8, xPopBean?.radiusY??8),
           paint..color = contentColor..strokeWidth = 1.0..style = mode);
-
 
       paint.blendMode = BlendMode.srcOut;
       if(!(xPopBean.isContentFill??true)){

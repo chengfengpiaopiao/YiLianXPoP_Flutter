@@ -54,9 +54,9 @@ class _MyAppState extends State<MyApp> {
                           "",style: new TextStyle(color: Colors.white,fontSize: 12),),
                     ),
                       drawAnchor: true,
-                        anchorColor:Colors.red,
+                        anchorColor:Colors.black,
                       drawContentBg: true,
-                      contentBg: Colors.red,
+                      contentBg: Colors.black,
                     ),
                     onClick: (){
                       print("exit");
