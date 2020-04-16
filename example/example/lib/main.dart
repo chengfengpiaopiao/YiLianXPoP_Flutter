@@ -59,7 +59,7 @@ class _MyAppState extends State<MyApp> {
                       contentBg: Colors.black,
                       isContentFill: true,
                       isAnchorFill: true,
-
+                      isAnchorTop: false,
                     ),
                     onClick: (){
                       print("exit");
@@ -102,6 +102,7 @@ class _MyAppState extends State<MyApp> {
               isWidthAll: false,
               anchorSize: [20,20],
               radiusX: 10.0,
+              isAnchorTop: false,
             ),
             onClick: (){
               print("exit");

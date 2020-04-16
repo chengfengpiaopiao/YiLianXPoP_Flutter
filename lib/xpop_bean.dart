@@ -31,15 +31,19 @@ class XPopBean{
   //画笔大小
   double strokeWidth = 1.0;
 
-  //
+  //是否是全屏
   bool isWidthAll = true;
 
+  //阴影大小
   num shadowSize;
+
+  //三角形顶部还是底部
+  bool isAnchorTop;
 
   XPopBean(this.drawAnchor, this.anchorColor, this.isAnchorFill,
       this.anchorSize, this.drawContentBg, this.contentBg, this.radiusX,
       this.radiusY, this.isContentFill, this.anSrcWidth, this.anSrcHeight,
-      this.marginTop,this.marginLeft,this.marginRight,this.strokeWidth,this.isWidthAll,this.shadowSize);
+      this.marginTop,this.marginLeft,this.marginRight,this.strokeWidth,this.isWidthAll,this.shadowSize,this.isAnchorTop);
 
 
 }

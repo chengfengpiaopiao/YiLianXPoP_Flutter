@@ -51,6 +51,9 @@ class YLianXPoP extends StatefulWidget {
 
   num shadowSize;
 
+  //三角形顶部还是底部
+  bool isAnchorTop;
+
   YLianXPoP(this.offset, this.wrapWidget,
       {this.drawAnchor,
       this.anchorColor,
@@ -67,7 +70,7 @@ class YLianXPoP extends StatefulWidget {
       this.marginLeft,
       this.marginRight,
       this.strokeWidth,
-      this.isWidthAll,this.shadowSize});
+      this.isWidthAll,this.shadowSize,this.isAnchorTop});
 
   @override
   State<StatefulWidget> createState() {
@@ -102,7 +105,7 @@ class _TipState extends State<YLianXPoP> {
         widget.marginLeft,
         widget.marginRight,
         widget.strokeWidth,
-        widget.isWidthAll,widget.shadowSize);
+        widget.isWidthAll,widget.shadowSize,widget.isAnchorTop);
     super.initState();
   }
 
@@ -264,11 +267,18 @@ class _Painter extends CustomPainter {
       }
       //绘制三角形
       if (xPopBean?.drawAnchor ?? true) {
+        num anchorRealY = drawContentStartY;
+        if(xPopBean.isAnchorTop == null){
+          xPopBean.isAnchorTop = true;
+        }
+        if((!xPopBean.isAnchorTop)){
+          anchorRealY = startY + marginTop + contentHeight + anchorHeight;
+        }
         bool isAnchorFill = xPopBean?.isAnchorFill ?? true;
         path
-          ..moveTo(startAnchorX, drawContentStartY)
-          ..lineTo(centerAnchorX, drawContentStartY - anchorHeight);
-        path..lineTo(endTranX, drawContentStartY);
+          ..moveTo(startAnchorX, anchorRealY)
+          ..lineTo(centerAnchorX, xPopBean.isAnchorTop ? (anchorRealY - anchorHeight) : (anchorRealY + anchorHeight));
+        path..lineTo(endTranX, anchorRealY);
         if (isAnchorFill) {
           path.close();
         }
@@ -280,6 +290,7 @@ class _Painter extends CustomPainter {
               ..style =
                   isAnchorFill ? PaintingStyle.fill : PaintingStyle.stroke);
       }
+
       if (xPopBean.drawContentBg ?? true) {
         canvas.drawRRect(
             RRect.fromLTRBXY(
