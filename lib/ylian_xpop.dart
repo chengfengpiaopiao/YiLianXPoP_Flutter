@@ -159,12 +159,8 @@ class _Painter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     RenderBox renderBox = anchorKeyWrap.currentContext.findRenderObject();
     var offset2 = renderBox.localToGlobal(Offset.zero);
-    print(offset2.dx);
-
     final contentWidth = anchorKeyWrap.currentContext.size.width;
     final contentHeight = anchorKeyWrap.currentContext.size.height;
-
-    print(contentWidth);
 
     num anSrcWidth = xPopBean?.anSrcWidth ?? 14;
     num anSrcHeight = xPopBean?.anSrcHeight ?? 14;
@@ -214,7 +210,7 @@ class _Painter extends CustomPainter {
         RRect.fromLTRBXY(
             xPopBean.marginLeft ?? 40,
             startY + marginTop + anchorHeight - suffix,
-            (xPopBean.isWidthAll?? true) ? MediaQuery.of(context).size.width - (xPopBean.marginRight ?? 40) : contentWidth,
+            (xPopBean.isWidthAll?? true) ? MediaQuery.of(context).size.width - (xPopBean.marginRight ?? 40) : contentWidth+xPopBean.marginLeft,
             startY + marginTop + contentHeight + anchorHeight,
             xPopBean?.radiusX ?? 8,
             xPopBean?.radiusY ?? 8),

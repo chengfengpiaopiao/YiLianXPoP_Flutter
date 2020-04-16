@@ -80,6 +80,7 @@ class _MyAppState extends State<MyApp> {
     return new Center(
       child: new GestureDetector(
         onTap: (){
+          //锚点位置: 空值高度
           Offset offset = Offset(100,100);
           Navigator.push(context, PopRoute(child: Popup(
             child: YLianXPoP(offset,new Container(
@@ -88,14 +89,14 @@ class _MyAppState extends State<MyApp> {
               child: new Text("任意位置"
                   "",style: new TextStyle(color: Colors.red,fontSize: 12),),
             ),
-              drawAnchor: false,
+              drawAnchor: true,
               anchorColor:Colors.black,
               drawContentBg: true,
               contentBg: Colors.black,
               isContentFill: true,
               isAnchorFill: true,
-              marginLeft: 0,
-              marginRight: 0,
+              marginLeft: 40, //控制左右边距
+              marginRight: 40,
               isWidthAll: true,
             ),
             onClick: (){
