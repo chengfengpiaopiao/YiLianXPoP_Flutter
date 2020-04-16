@@ -59,7 +59,6 @@ class _MyAppState extends State<MyApp> {
                       contentBg: Colors.black,
                       isContentFill: true,
                       isAnchorFill: true,
-                      isAnchorTop: false,
                     ),
                     onClick: (){
                       print("exit");
@@ -70,8 +69,48 @@ class _MyAppState extends State<MyApp> {
               )
             ],
           ),
-       _createAnyPosition()
+       _createAnyPosition(),
       ],
+      ),
+    );
+  }
+
+  GlobalKey anchorAnyKey = GlobalKey();
+
+  Widget _createBtmPosition(){
+    return new Positioned(
+      bottom: 0,
+      child: new GestureDetector(
+        onTap: (){
+          //锚点位置: 空值高度
+          RenderBox renderBox = anchorAnyKey.currentContext.findRenderObject();
+          var offset = renderBox.localToGlobal(Offset.zero);
+          Navigator.push(context, PopRoute(child: Popup(
+            child: YLianXPoP(offset,new Container(
+              //内容大小
+              padding: EdgeInsets.all(30),
+              margin: EdgeInsets.all(10),
+              child: new Text("任意位置"
+                  "",style: new TextStyle(color: Colors.red,fontSize: 12),),
+            ),
+              drawAnchor: true,
+              anchorColor:Colors.black,
+              drawContentBg: true,
+              contentBg: Colors.black,
+              isContentFill: true,
+              isAnchorFill: true,
+            ),
+            onClick: (){
+              print("exit");
+            },
+          )));
+        },
+        child: new Container(
+          key:  anchorAnyKey,
+          margin: EdgeInsets.all(15),
+          child:new Text("2019年1月10日，国家互联网信息办公室发布《区块链信息服务管理规定》 ",
+            style: new TextStyle(color: Colors.black,fontSize: 15,fontWeight: FontWeight.bold),) ,
+        ),
       ),
     );
   }

@@ -161,9 +161,10 @@ class _Painter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     RenderBox renderBox = anchorKeyWrap.currentContext.findRenderObject();
-    var offset2 = renderBox.localToGlobal(Offset.zero);
+    var offsetNotUse = renderBox.localToGlobal(Offset.zero);
     final contentWidth = anchorKeyWrap.currentContext.size.width;
     final contentHeight = anchorKeyWrap.currentContext.size.height;
+    final windowHeight = MediaQuery.of(context).size.height;
 
     num marginTop = xPopBean?.marginTop ?? 10;
     num anSrcWidth = xPopBean?.anSrcWidth ?? 14;
@@ -203,7 +204,6 @@ class _Painter extends CustomPainter {
       paint.style = (xPopBean.isAnchorFill ?? true) ? PaintingStyle.fill : PaintingStyle.stroke;
       paint.strokeWidth = stokeWidth;
       const PI = 3.1415926;
-
       //绘制左圆弧
       Rect rectLeftArc = Rect.fromCircle(
           center: Offset(
@@ -271,6 +271,23 @@ class _Painter extends CustomPainter {
         if(xPopBean.isAnchorTop == null){
           xPopBean.isAnchorTop = true;
         }
+        /*
+        print(windowHeight - offset.dy );
+        print(windowHeight - offset.dy  < marginTop + anchorHeight + contentHeight);
+        if(xPopBean.isAnchorTop){
+          if( windowHeight - offset.dy  < marginTop + anchorHeight + contentHeight){
+            xPopBean.isAnchorTop = false;
+            anchorRealY = startY - marginTop - anchorHeight;
+          }
+        }else{
+          if(marginTop + anchorHeight + contentHeight <  offset.dy ){
+            xPopBean.isAnchorTop = true;
+          }
+        }
+        if(xPopBean.isAnchorTop == null){
+          xPopBean.isAnchorTop = true;
+        }
+         */
         if((!xPopBean.isAnchorTop)){
           anchorRealY = startY + marginTop + contentHeight + anchorHeight;
         }
