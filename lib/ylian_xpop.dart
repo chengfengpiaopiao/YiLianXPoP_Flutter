@@ -49,6 +49,8 @@ class YLianXPoP extends StatefulWidget {
   double strokeWidth = 1.0;
   bool isWidthAll = true;
 
+  num shadowSize;
+
   YLianXPoP(this.offset, this.wrapWidget,
       {this.drawAnchor,
       this.anchorColor,
@@ -65,7 +67,7 @@ class YLianXPoP extends StatefulWidget {
       this.marginLeft,
       this.marginRight,
       this.strokeWidth,
-      this.isWidthAll});
+      this.isWidthAll,this.shadowSize});
 
   @override
   State<StatefulWidget> createState() {
@@ -100,7 +102,7 @@ class _TipState extends State<YLianXPoP> {
         widget.marginLeft,
         widget.marginRight,
         widget.strokeWidth,
-        widget.isWidthAll);
+        widget.isWidthAll,widget.shadowSize);
     super.initState();
   }
 
@@ -184,6 +186,8 @@ class _Painter extends CustomPainter {
     if(radiusBtm == null){
       radiusBtm = xPopBean.radiusX ?? 8;
     }
+    num radius = radiusTop;
+    num strokeStartX = (xPopBean.marginLeft ?? 40) + radius;
     Paint paint = Paint();
     Path path = Path();
     //内容起点Y
@@ -196,8 +200,7 @@ class _Painter extends CustomPainter {
       paint.style = (xPopBean.isAnchorFill ?? true) ? PaintingStyle.fill : PaintingStyle.stroke;
       paint.strokeWidth = stokeWidth;
       const PI = 3.1415926;
-      num radius = radiusTop;
-      num strokeStartX = (xPopBean.marginLeft ?? 40) + radius;
+
       //绘制左圆弧
       Rect rectLeftArc = Rect.fromCircle(
           center: Offset(
@@ -242,6 +245,23 @@ class _Painter extends CustomPainter {
             strokeStartX - radiusTop, drawContentStartY - suffix + radiusTop);
       canvas.drawPath(newPath, paint);
     } else {
+      if(xPopBean.shadowSize != null && (xPopBean?.drawAnchor ?? true) && xPopBean.drawContentBg ?? true){
+        Path shadowPath = new Path();
+        num shadowSize =xPopBean.shadowSize??0.0;
+        //TODO 圆角
+        shadowPath
+          ..moveTo((xPopBean.marginLeft ?? 40)-shadowSize, drawContentStartY -2 * shadowSize)
+          ..lineTo(strokeStartX-shadowSize, drawContentStartY-2 * shadowSize)
+          ..lineTo(startAnchorX-shadowSize, drawContentStartY-2 * shadowSize)
+          ..lineTo(centerAnchorX, drawContentStartY -anchorHeight-2 * shadowSize)
+          ..lineTo(endTranX+shadowSize, drawContentStartY-2 * shadowSize)
+          ..close()
+          ..lineTo(totalWidth + shadowSize, drawContentStartY-2 * shadowSize)
+          ..lineTo(
+              totalWidth+ shadowSize, startY + marginTop + contentHeight + anchorHeight)..lineTo((xPopBean.marginLeft ?? 40)-shadowSize,
+            startY + marginTop + contentHeight + anchorHeight)..lineTo((xPopBean.marginLeft ?? 40)-shadowSize, drawContentStartY - suffix )..close();
+        canvas.drawShadow(shadowPath, Colors.blue, shadowSize, false);
+      }
       //绘制三角形
       if (xPopBean?.drawAnchor ?? true) {
         bool isAnchorFill = xPopBean?.isAnchorFill ?? true;

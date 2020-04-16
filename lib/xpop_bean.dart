@@ -34,10 +34,12 @@ class XPopBean{
   //
   bool isWidthAll = true;
 
+  num shadowSize;
+
   XPopBean(this.drawAnchor, this.anchorColor, this.isAnchorFill,
       this.anchorSize, this.drawContentBg, this.contentBg, this.radiusX,
       this.radiusY, this.isContentFill, this.anSrcWidth, this.anSrcHeight,
-      this.marginTop,this.marginLeft,this.marginRight,this.strokeWidth,this.isWidthAll);
+      this.marginTop,this.marginLeft,this.marginRight,this.strokeWidth,this.isWidthAll,this.shadowSize);
 
 
 }

@@ -94,14 +94,14 @@ class _MyAppState extends State<MyApp> {
               anchorColor:Colors.black,
               drawContentBg: true,
               contentBg: Colors.black,
-              isContentFill: false,
-              isAnchorFill: false,
+              isContentFill: true,
+              isAnchorFill: true,
               //控制左右边距
               marginLeft: 40,
               marginRight: 40,
               isWidthAll: false,
               anchorSize: [20,20],
-              radiusX: 3.0,
+              radiusX: 10.0,
             ),
             onClick: (){
               print("exit");
