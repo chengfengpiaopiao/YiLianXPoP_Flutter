@@ -131,7 +131,6 @@ class _TipState extends State<YLianXPoP> {
             child: new Stack(
               children: <Widget>[
                 Positioned(
-                  right: 0,
                   child: widget,
                 )
               ],
