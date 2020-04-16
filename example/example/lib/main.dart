@@ -36,7 +36,7 @@ class _MyAppState extends State<MyApp> {
         children: <Widget>[
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               Text('1.假设您的锚点是右侧的?号 --> ',style: new TextStyle(fontSize: 15,fontWeight: FontWeight.bold)),
@@ -84,7 +84,8 @@ class _MyAppState extends State<MyApp> {
           Offset offset = Offset(100,100);
           Navigator.push(context, PopRoute(child: Popup(
             child: YLianXPoP(offset,new Container(
-              padding: EdgeInsets.all(5),
+              //内容大小
+              padding: EdgeInsets.all(30),
               margin: EdgeInsets.all(10),
               child: new Text("任意位置"
                   "",style: new TextStyle(color: Colors.red,fontSize: 12),),
@@ -93,11 +94,14 @@ class _MyAppState extends State<MyApp> {
               anchorColor:Colors.black,
               drawContentBg: true,
               contentBg: Colors.black,
-              isContentFill: true,
-              isAnchorFill: true,
-              marginLeft: 40, //控制左右边距
+              isContentFill: false,
+              isAnchorFill: false,
+              //控制左右边距
+              marginLeft: 40,
               marginRight: 40,
-              isWidthAll: true,
+              isWidthAll: false,
+              anchorSize: [20,20],
+              radiusX: 3.0,
             ),
             onClick: (){
               print("exit");

@@ -110,7 +110,8 @@ class _TipState extends State<YLianXPoP> {
       key: anchorKeyWrap,
       child: wrapWidget,
     );
-    var widgetPainter = CustomPaint(painter: _Painter(offset, context, widget, xPopBean));
+    var widgetPainter =
+        CustomPaint(painter: _Painter(offset, context, widget, xPopBean));
     return Container(
       child: Stack(
         children: <Widget>[
@@ -144,11 +145,8 @@ class _TipState extends State<YLianXPoP> {
 
 class _Painter extends CustomPainter {
   Offset offset;
-  BuildContext context;
   Widget wrapWidget;
-
-  //锚点的 宽 高 离锚点的距离
-
+  BuildContext context;
   XPopBean xPopBean;
 
   GlobalKey globalKey = GlobalKey();
@@ -162,75 +160,120 @@ class _Painter extends CustomPainter {
     final contentWidth = anchorKeyWrap.currentContext.size.width;
     final contentHeight = anchorKeyWrap.currentContext.size.height;
 
+    num marginTop = xPopBean?.marginTop ?? 10;
     num anSrcWidth = xPopBean?.anSrcWidth ?? 14;
     num anSrcHeight = xPopBean?.anSrcHeight ?? 14;
-    num marginTop = xPopBean?.marginTop ?? 10;
+    var anchorSize = xPopBean?.anchorSize ?? [10, 10];
 
     num anchorHeight =
         (xPopBean?.anchorSize) != null ? xPopBean?.anchorSize[1] : 10;
     num startY = offset.dy + anSrcHeight;
-
-    PaintingStyle mode = PaintingStyle.fill;
-    if (xPopBean.isContentFill ?? true) {
-      mode = PaintingStyle.fill;
-    } else {
-      mode = PaintingStyle.stroke;
-    }
-    Color contentColor = xPopBean.contentBg ?? Colors.black;
-
-    Paint paint = Paint();
-
     Color anchorColor = xPopBean?.anchorColor ?? Colors.black;
-    bool isAnchorFill = xPopBean?.isAnchorFill ?? true;
-    var anchorSize = xPopBean?.anchorSize ?? [10, 10];
-
-    num centerPX = offset.dx + anSrcWidth / 2;
-    num startTranX = centerPX - anchorSize[0] / 2;
-    num endTranX = centerPX + anchorSize[0] / 2;
-    Path path = Path();
-    path
-      ..moveTo(startTranX, startY + marginTop + anchorHeight)
-      ..lineTo(centerPX, startY + marginTop + anchorHeight - anchorHeight);
-    path..lineTo(endTranX, startY + marginTop + anchorHeight);
-    path.close();
-    if (isAnchorFill) {
-      path.close();
-    }
+    Color contentColor = xPopBean.contentBg ?? Colors.black;
+    num centerAnchorX = offset.dx + anSrcWidth / 2;
+    num startAnchorX = centerAnchorX - anchorSize[0] / 2;
+    num endTranX = centerAnchorX + anchorSize[0] / 2;
     num stokeWidth = xPopBean.strokeWidth ?? 1.0;
-    if (xPopBean?.drawAnchor ?? true) {
-      canvas.drawPath(
-          path,
-          paint
-            ..color = anchorColor
-            ..strokeWidth = stokeWidth
-            ..style = isAnchorFill ? PaintingStyle.fill : PaintingStyle.stroke);
-    }
     num suffix = (xPopBean.isContentFill ?? true) ? stokeWidth : 0;
-    canvas.drawRRect(
-        RRect.fromLTRBXY(
-            xPopBean.marginLeft ?? 40,
-            startY + marginTop + anchorHeight - suffix,
-            (xPopBean.isWidthAll?? true) ? MediaQuery.of(context).size.width - (xPopBean.marginRight ?? 40) : contentWidth+xPopBean.marginLeft,
-            startY + marginTop + contentHeight + anchorHeight,
-            xPopBean?.radiusX ?? 8,
-            xPopBean?.radiusY ?? 8),
-        paint
-          ..color = contentColor
-          ..strokeWidth = stokeWidth
-          ..style = mode);
+    num totalWidth = (xPopBean.isWidthAll ?? true)
+        ? MediaQuery.of(context).size.width - (xPopBean.marginRight ?? 40)
+        : contentWidth + xPopBean.marginLeft;
 
-    paint.blendMode = BlendMode.srcOut;
-    if (!(xPopBean.isContentFill ?? true)) {
+    num radiusTop = xPopBean.radiusX ?? 8;
+    num radiusBtm = xPopBean.radiusY;
+    if(radiusBtm == null){
+      radiusBtm = xPopBean.radiusX ?? 8;
+    }
+    Paint paint = Paint();
+    Path path = Path();
+    //内容起点Y
+    num drawContentStartY = startY + marginTop + anchorHeight;
+    if ((xPopBean.drawContentBg ?? true) &&
+        (xPopBean.drawAnchor ?? true) &&
+        !(xPopBean.isAnchorFill ?? true) &&
+        !(xPopBean.isContentFill ?? true)) {
+      paint.color = xPopBean.contentBg??Colors.black;
+      paint.style = (xPopBean.isAnchorFill ?? true) ? PaintingStyle.fill : PaintingStyle.stroke;
+      paint.strokeWidth = stokeWidth;
+      const PI = 3.1415926;
+      num radius = radiusTop;
+      num strokeStartX = (xPopBean.marginLeft ?? 40) + radius;
+      //绘制左圆弧
+      Rect rectLeftArc = Rect.fromCircle(
+          center: Offset(
+              strokeStartX, (drawContentStartY - suffix) + radiusTop),
+          radius: radius);
+      canvas.drawArc(rectLeftArc, PI, PI / 2, false, paint);
       Path newPath = Path();
       newPath
-        ..moveTo(startTranX + stokeWidth / 2, startY + marginTop + anchorHeight)
-        ..lineTo(endTranX - stokeWidth / 2, startY + marginTop + anchorHeight);
-      canvas.drawPath(
-          newPath,
-          paint
-            ..color = Colors.transparent
-            ..strokeWidth = stokeWidth
-            ..style = isAnchorFill ? PaintingStyle.fill : PaintingStyle.stroke);
+        ..moveTo(strokeStartX, drawContentStartY)
+        ..lineTo(startAnchorX, drawContentStartY)
+        ..lineTo(centerAnchorX, drawContentStartY - anchorHeight)
+        ..lineTo(endTranX, drawContentStartY)
+        ..lineTo(totalWidth - radiusTop, drawContentStartY);
+      Rect rectTopRightArc = Rect.fromCircle(
+          center: Offset(
+              totalWidth - radiusTop, (drawContentStartY - suffix) + radiusTop),
+          radius: radius);
+      canvas.drawArc(rectTopRightArc, 3 * PI / 2, PI / 2, false, paint);
+      newPath
+        ..moveTo(totalWidth, (drawContentStartY - suffix) + radiusTop)
+        ..lineTo(
+            totalWidth, startY + marginTop + contentHeight + anchorHeight - radiusTop);
+      Rect btmRightArc = Rect.fromCircle(
+          center: Offset(totalWidth - radiusTop,
+              startY + marginTop + contentHeight + anchorHeight - radiusTop),
+          radius: radius);
+      canvas.drawArc(btmRightArc, 0, PI / 2, false, paint);
+      newPath
+        ..moveTo(
+            totalWidth - radiusTop, startY + marginTop + contentHeight + anchorHeight)
+        ..lineTo(
+            strokeStartX, startY + marginTop + contentHeight + anchorHeight);
+      Rect btmLeftArc = Rect.fromCircle(
+          center: Offset(strokeStartX,
+              startY + marginTop + contentHeight + anchorHeight - radiusTop),
+          radius: radius);
+      canvas.drawArc(btmLeftArc, PI / 2, PI / 2, false, paint);
+      newPath
+        ..moveTo(strokeStartX - radiusTop,
+            startY + marginTop + contentHeight + anchorHeight - radiusTop)
+        ..lineTo(
+            strokeStartX - radiusTop, drawContentStartY - suffix + radiusTop);
+      canvas.drawPath(newPath, paint);
+    } else {
+      //绘制三角形
+      if (xPopBean?.drawAnchor ?? true) {
+        bool isAnchorFill = xPopBean?.isAnchorFill ?? true;
+        path
+          ..moveTo(startAnchorX, drawContentStartY)
+          ..lineTo(centerAnchorX, drawContentStartY - anchorHeight);
+        path..lineTo(endTranX, drawContentStartY);
+        if (isAnchorFill) {
+          path.close();
+        }
+        canvas.drawPath(
+            path,
+            paint
+              ..color = anchorColor
+              ..strokeWidth = stokeWidth
+              ..style =
+                  isAnchorFill ? PaintingStyle.fill : PaintingStyle.stroke);
+      }
+      if (xPopBean.drawContentBg ?? true) {
+        canvas.drawRRect(
+            RRect.fromLTRBXY(
+                xPopBean.marginLeft ?? 40,
+                drawContentStartY - suffix,
+                totalWidth,
+                startY + marginTop + contentHeight + anchorHeight,
+                xPopBean?.radiusX ?? 8,
+                xPopBean?.radiusY ?? 8),
+            paint
+              ..color = contentColor
+              ..strokeWidth = stokeWidth
+              ..style = (xPopBean?.isContentFill ?? true) ? PaintingStyle.fill : PaintingStyle.stroke);
+      }
     }
   }
 
